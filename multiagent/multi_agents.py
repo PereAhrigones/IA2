@@ -74,8 +74,45 @@ class ReflexAgent(Agent):
         new_scared_times = [ghostState.scared_timer for ghostState in new_ghost_states]
         
         "*** YOUR CODE HERE ***"
-        return successor_game_state.get_score()
+            # Initialize evaluation components
+        min_food_distance = float("inf")
+        ghost_penalty = 0
+        scared_ghost_bonus = 0
 
+        # Compute minimum distance to food
+        for food in new_food.as_list():
+            min_food_distance = min(min_food_distance, manhattan_distance(new_pos, food))
+
+        # Evaluate ghost positions
+        for i, ghost in enumerate(successor_game_state.get_ghost_positions()):
+            ghost_distance = manhattan_distance(new_pos, ghost)
+            if new_scared_times[i] > 0:  # Ghost is scared
+                scared_ghost_bonus += 200 / (ghost_distance + 1)  # Reward getting closer to scared ghosts
+            elif ghost_distance < 2:  # Ghost is too close and not scared
+                ghost_penalty = -float('inf')  # Immediate bad state
+
+        # Penalize staying in the same position (likely a no-op move)
+        if new_pos == current_game_state.get_pacman_position():
+            return -float('inf')
+
+        # Penalize repetitive back-and-forth moves
+        if successor_game_state.get_pacman_position() == current_game_state.get_pacman_position():
+            ghost_penalty -= 10  # Small penalty to discourage repetitive moves
+
+        # Reward progress toward food or scared ghosts
+        progress_reward = 1.0 / (min_food_distance + 1)  # Encourage moving closer to food
+        if min_food_distance == float("inf"):  # No food left
+            progress_reward = 0
+
+        # Calculate the final score
+        score = (
+            successor_game_state.get_score()  # Base game score
+            + progress_reward  # Reward for moving closer to food
+            + scared_ghost_bonus  # Bonus for chasing scared ghosts
+            + ghost_penalty  # Penalty for being close to non-scared ghosts
+        )
+
+        return score
 def score_evaluation_function(current_game_state):
     """
     This default evaluation function just returns the score of the state.
