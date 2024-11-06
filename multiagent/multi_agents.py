@@ -94,6 +94,8 @@ class ReflexAgent(Agent):
         # Penalize staying in the same position (likely a no-op move)
         if new_pos == current_game_state.get_pacman_position():
             return -float('inf')
+        
+        #comentario
 
         # Penalize repetitive back-and-forth moves
         if successor_game_state.get_pacman_position() == current_game_state.get_pacman_position():
