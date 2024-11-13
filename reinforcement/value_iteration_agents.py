@@ -91,6 +91,17 @@ class ValueIterationAgent(ValueEstimationAgent):
           terminal state, you should return None.
         """
         "*** YOUR CODE HERE ***"
+        if self.mdp.is_terminal(state):
+            return None
+        actions = self.mdp.get_possible_actions(state)
+        max_value = self.get_q_value(state, actions[0])
+        max_action = actions[0]
+        for action in actions:
+            value = self.get_q_value(state, action)
+            if value > max_value:
+                max_value = value
+                max_action = action
+        return max_action
         util.raise_not_defined()
 
     def get_policy(self, state):
