@@ -243,7 +243,7 @@ class AlphaBetaAgent(MultiAgentSearchAgent):
             if value > max_value:
                 max_value = value
                 max_action = action
-            # Alpha-Beta pruning
+            # Alpha-Beta pruning so
             if max_value > beta:
                 return max_action, max_value
             alpha = max(alpha, max_value)
