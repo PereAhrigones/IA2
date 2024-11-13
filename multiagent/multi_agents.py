@@ -95,8 +95,6 @@ class ReflexAgent(Agent):
         if new_pos == current_game_state.get_pacman_position():
             return -float('inf')
         
-        #comentario
-
         # Penalize repetitive back-and-forth moves
         if successor_game_state.get_pacman_position() == current_game_state.get_pacman_position():
             ghost_penalty -= 10  # Small penalty to discourage repetitive moves
@@ -212,32 +210,44 @@ class MinimaxAgent(MultiAgentSearchAgent):
 
 class AlphaBetaAgent(MultiAgentSearchAgent):
     """
-    Your minimax agent with alpha-beta pruning (question 3)
+    An agent that uses Alpha-Beta pruning to choose the best action.
     """
 
     def get_action(self, game_state):
         """
-        Returns the minimax action using self.depth and self.evaluation_function
+        Returns the minimax action using self.depth and self.evaluation_function.
+        This function initiates the alpha-beta pruning process.
         """
-        "*** YOUR CODE HERE ***"
-
+        # Start the alpha-beta pruning process with initial alpha and beta values
+        return self.max_value(game_state, 0, -float("inf"), float("inf"))[0]
 
         util.raise_not_defined()
     
     def max_value(self, game_state, depth, alpha, beta):
+        """
+        Returns the maximum value for the current game state.
+        This function is called for the maximizing player (Pacman).
+        """
+        # Check if the search has reached the maximum depth or if the game is over
         if depth == self.depth or game_state.is_win() or game_state.is_lose():
             return None, self.evaluation_function(game_state)
+        
         max_value = -float("inf")
         max_action = None
+
+        # Iterate over all legal actions for the maximizing player
         for action in game_state.get_legal_actions(0):
             successor = game_state.generate_successor(0, action)
+            # Call min_value for the minimizing player (ghosts)
             _, value = self.min_value(successor, depth, 1, alpha, beta)
             if value > max_value:
                 max_value = value
                 max_action = action
+            # Alpha-Beta pruning
             if max_value > beta:
                 return max_action, max_value
-            alpha = max(alpha, max_value) 
+            alpha = max(alpha, max_value)
+        
         return max_action, max_value
     
     def min_value(self, game_state, depth, agent, alpha, beta):
