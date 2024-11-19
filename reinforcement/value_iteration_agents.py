@@ -103,6 +103,8 @@ class ValueIterationAgent(ValueEstimationAgent):
         if self.mdp.is_terminal(state):
             return None
         actions = self.mdp.get_possible_actions(state)
+        if len(actions) == 0:
+            return None #redundant because of the above if statement but here just in case
         max_value = self.get_q_value(state, actions[0])
         max_action = actions[0]
         for action in actions:
