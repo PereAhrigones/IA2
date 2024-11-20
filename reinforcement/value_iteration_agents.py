@@ -66,6 +66,25 @@ class ValueIterationAgent(ValueEstimationAgent):
           value iteration, V_k+1(...) depends on V_k(...)'s.
         """
         "*** YOUR CODE HERE ***"
+        states = self.mdp.get_states()
+        
+        for i in range(self.iterations):
+            new_values = util.Counter()
+            for state in states:
+                if self.mdp.is_terminal(state):
+                    continue
+                max_value = float('-inf')
+                for action in self.mdp.get_possible_actions(state):
+                    q_value = 0
+                    for next_state, prob in self.mdp.get_transition_states_and_probs(state, action):
+                        reward = self.mdp.get_reward(state, action, next_state)
+                        q_value += prob * (reward + self.discount * self.values[next_state])
+                    max_value = max(max_value, q_value)
+                new_values[state] = max_value
+            self.values = new_values
+        
+
+
             
     def get_value(self, state):
         """
@@ -80,10 +99,16 @@ class ValueIterationAgent(ValueEstimationAgent):
         """
         "*** YOUR CODE HERE ***"
         total = 0
+        transStatesAndProbs = self.mdp.get_transition_states_and_probs(state, action)
 
-        for next_state, prob in self.mdp.get_transition_states_and_probs(state, action):
-            total += prob * (self.mdp.get_reward(state, action, next_state) + self.discount * self.get_value(next_state))
-
+        
+        for tranStateAndProb in transStatesAndProbs:
+            tstate = tranStateAndProb[0]
+            prob = tranStateAndProb[1]
+            reward = self.mdp.get_reward(state, action, tstate)
+            value = self.get_value(tstate)
+            total += prob * (reward + self.discount * value)
+            
         return total
 
 
