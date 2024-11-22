@@ -54,7 +54,7 @@ class ValueEstimationAgent(Agent):
         """
         Should return Q(state,action)
         """
-        util.raise_not_defined()
+
 
     def get_value(self, state):
         """
@@ -63,7 +63,7 @@ class ValueEstimationAgent(Agent):
 
         V(s) = max_{a in actions} Q(s,a)
         """
-        util.raise_not_defined()
+
 
     def get_policy(self, state):
         """
@@ -76,15 +76,16 @@ class ValueEstimationAgent(Agent):
         If many actions achieve the maximal Q-value,
         it doesn't matter which is selected.
         """
-        util.raise_not_defined()
+
 
     def get_action(self, state):
         """
         state: can call state.get_legal_actions()
         Choose an action and return it.
         """
-        util.raise_not_defined()
 
+
+        
 class ReinforcementAgent(ValueEstimationAgent):
     """
       Abstract Reinforcement Agent: A ValueEstimationAgent
