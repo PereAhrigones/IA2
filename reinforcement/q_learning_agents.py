@@ -135,7 +135,7 @@ class QLearningAgent(ReinforcementAgent):
         q_value = self.get_q_value(state, action)
         value = self.compute_value_from_q_values(next_state)
         sample = reward + self.discount * value
-        self.q_values[(state, action)] = (1-self.alpha) * q_value + self.alpha * (sample - q_value)
+        self.q_values[(state, action)] = q_value + self.alpha * (sample - q_value)
 
     def get_policy(self, state):
         return self.compute_action_from_q_values(state)
