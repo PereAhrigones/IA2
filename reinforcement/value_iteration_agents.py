@@ -68,21 +68,34 @@ class ValueIterationAgent(ValueEstimationAgent):
           value iteration, V_k+1(...) depends on V_k(...)'s.
         """
         "*** YOUR CODE HERE ***"
+        # Get the list of all states in the MDP
         states = self.mdp.get_states()
-        
+
+        # Iterate for a specified number of iterations (or until convergence, depending on the setup)
+
         for i in range(self.iterations):
-            new_values = util.Counter()
+            new_values = util.Counter() # Create a counter to hold the new values for this iteration
+            # Iterate over each state in the MDP
+
             for state in states:
                 if self.mdp.is_terminal(state):
                     continue
+                # Initialize the maximum value for this state as negative infinity
                 max_value = float('-inf')
+                # For each action possible in the state, initialize the Q-value for this action to 0
+
                 for action in self.mdp.get_possible_actions(state):
                     q_value = 0
+                    # For each possible next state and probability resulting from this action, get the reward for transition and update the Q-value
+
                     for next_state, prob in self.mdp.get_transition_states_and_probs(state, action):
                         reward = self.mdp.get_reward(state, action, next_state)
                         q_value += prob * (reward + self.discount * self.values[next_state])
+                    # Update the maximum value for this state if the Q-value is greater than the current maximum value
                     max_value = max(max_value, q_value)
+                # Update the new values for this iteration with the maximum value for this state
                 new_values[state] = max_value
+            # Update the values for the next iteration with the new values
             self.values = new_values
         
 
@@ -100,17 +113,20 @@ class ValueIterationAgent(ValueEstimationAgent):
           value function stored in self.values.
         """
         "*** YOUR CODE HERE ***"
+        #Initialize total Q-value as 0
         total = 0
+        #Get the possible next states and probabilities resulting from the action in the
         transStatesAndProbs = self.mdp.get_transition_states_and_probs(state, action)
 
         
+        #For each possible next state and probability, get the reward for the transition and update the Q-value
         for tranStateAndProb in transStatesAndProbs:
             tstate = tranStateAndProb[0]
             prob = tranStateAndProb[1]
             reward = self.mdp.get_reward(state, action, tstate)
             value = self.get_value(tstate)
             total += prob * (reward + self.discount * value)
-            
+        #Return the total Q-value
         return total
 
 
@@ -127,18 +143,23 @@ class ValueIterationAgent(ValueEstimationAgent):
           terminal state, you should return None.
         """
         "*** YOUR CODE HERE ***"
+        #If the state is terminal, return None
         if self.mdp.is_terminal(state):
             return None
+        #Get the possible actions in the state
         actions = self.mdp.get_possible_actions(state)
         if len(actions) == 0:
             return None #redundant because of the above if statement but here just in case
+        #Initialize the maximum value for the state as the Q-value of the first action
         max_value = self.get_q_value(state, actions[0])
         max_action = actions[0]
+        #For each action in the state, get the Q-value and update the maximum value and action if the Q-value is greater
         for action in actions:
             value = self.get_q_value(state, action)
             if value > max_value:
                 max_value = value
                 max_action = action
+        #Return the action with the maximum Q-value
         return max_action
         util.raise_not_defined()
 
@@ -153,6 +174,7 @@ class ValueIterationAgent(ValueEstimationAgent):
         return self.compute_q_value_from_values(state, action)
 
 class AsynchronousValueIterationAgent(ValueIterationAgent):
+
     """
         * Please read learning_agents.py before reading this.*
 
